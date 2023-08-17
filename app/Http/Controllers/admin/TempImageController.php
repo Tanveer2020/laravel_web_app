@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Controllers\admin;
+use App\Models\TempFile;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class TempImageController extends Controller
+{
+    public function upload(Request $request) {
+       
+       $temp = new TempFile;
+       $temp->name = "Temp Value";
+       $temp->save(); // This will create a blank entry in DB
+
+       $image = $request->file('file');
+
+       $destinationPath = './uploads/temp/';
+
+       $extenstion = $image->getClientOriginalExtension();
+
+       $newFileName = $temp->id. '.' .$extenstion;
+       $image->move($destinationPath,$newFileName);
+       $temp->name = $newFileName;
+       $temp->save();
+       
+       return response()->json([
+         'status' => 200,
+         'id'     => $temp->id,
+         'name'   => $newFileName,
+       ]);
+ 
+    }
+}
